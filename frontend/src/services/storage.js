@@ -82,3 +82,15 @@ export const getDashboardStats = () => {
     ).toFixed(1),
   };
 };
+
+export const updateProduct = (updatedProduct) => {
+  const products = getProducts();
+
+  const updatedProducts = products.map((product) =>
+    product.id === updatedProduct.id
+      ? updatedProduct
+      : product
+  );
+
+  saveProducts(updatedProducts);
+};

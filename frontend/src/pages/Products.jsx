@@ -3,10 +3,13 @@ import {
   getProducts,
   addProduct,
   deleteProduct,
+  updateProduct,
 } from "../services/storage";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
+
+  const [editingId, setEditingId] = useState(null);
 
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
@@ -22,9 +25,37 @@ export default function Products() {
     setProducts(savedProducts);
   };
 
+  const clearForm = () => {
+    setName("");
+    setCategory("");
+    setPrice("");
+    setSku("");
+    setEditingId(null);
+  };
+
   const handleDelete = (id) => {
+    const confirmDelete = window.confirm(
+      "Deseja realmente excluir este produto?"
+    );
+
+    if (!confirmDelete) return;
+
     deleteProduct(id);
     loadProducts();
+  };
+
+  const handleEdit = (product) => {
+    setEditingId(product.id);
+
+    setName(product.name);
+    setCategory(product.category);
+    setPrice(product.price);
+    setSku(product.sku);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   const handleSubmit = (e) => {
@@ -35,19 +66,25 @@ export default function Products() {
       return;
     }
 
-    addProduct({
-      name,
-      category,
-      price,
-      sku,
-    });
+    if (editingId) {
+      updateProduct({
+        id: editingId,
+        name,
+        category,
+        price,
+        sku,
+      });
+    } else {
+      addProduct({
+        name,
+        category,
+        price,
+        sku,
+      });
+    }
 
     loadProducts();
-
-    setName("");
-    setCategory("");
-    setPrice("");
-    setSku("");
+    clearForm();
   };
 
   return (
@@ -55,8 +92,8 @@ export default function Products() {
       <h1>📦 Produtos</h1>
 
       <p>
-        Cadastre os produtos que serão utilizados
-        pela inteligência artificial.
+        Cadastre e gerencie os produtos que serão
+        utilizados pela inteligência artificial.
       </p>
 
       <form
@@ -98,8 +135,19 @@ export default function Products() {
         />
 
         <button type="submit">
-          Salvar Produto
+          {editingId
+            ? "Atualizar Produto"
+            : "Salvar Produto"}
         </button>
+
+        {editingId && (
+          <button
+            type="button"
+            onClick={clearForm}
+          >
+            Cancelar Edição
+          </button>
+        )}
       </form>
 
       <div style={{ marginTop: "40px" }}>
@@ -108,49 +156,92 @@ export default function Products() {
         {products.length === 0 ? (
           <p>Nenhum produto cadastrado.</p>
         ) : (
-          <ul style={{ padding: 0, listStyle: "none" }}>
+          <ul
+            style={{
+              listStyle: "none",
+              padding: 0,
+            }}
+          >
             {products.map((product) => (
               <li
                 key={product.id}
                 style={{
-                  padding: "15px",
-                  marginBottom: "12px",
                   background: "#fff",
+                  padding: "15px",
+                  marginBottom: "15px",
                   borderRadius: "10px",
                   boxShadow:
-                    "0 2px 6px rgba(0,0,0,0.08)",
+                    "0 2px 8px rgba(0,0,0,0.08)",
                 }}
               >
-                <strong>{product.name}</strong>
+                <strong>
+                  {product.name}
+                </strong>
 
                 <p>
-                  Categoria: {product.category}
+                  Categoria:{" "}
+                  {product.category}
                 </p>
 
                 <p>
-                  Preço: R$ {product.price}
+                  Preço: R${" "}
+                  {product.price}
                 </p>
 
                 <p>
                   SKU: {product.sku}
                 </p>
 
-                <button
-                  onClick={() =>
-                    handleDelete(product.id)
-                  }
+                <div
                   style={{
-                    backgroundColor: "#dc3545",
-                    color: "#fff",
-                    border: "none",
-                    padding:
-                      "8px 14px",
-                    borderRadius: "6px",
-                    cursor: "pointer",
+                    display: "flex",
+                    gap: "10px",
                   }}
                 >
-                  Excluir
-                </button>
+                  <button
+                    onClick={() =>
+                      handleEdit(
+                        product
+                      )
+                    }
+                    style={{
+                      background:
+                        "#0d6efd",
+                      color: "#fff",
+                      border: "none",
+                      padding:
+                        "8px 14px",
+                      borderRadius:
+                        "6px",
+                      cursor:
+                        "pointer",
+                    }}
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      handleDelete(
+                        product.id
+                      )
+                    }
+                    style={{
+                      background:
+                        "#dc3545",
+                      color: "#fff",
+                      border: "none",
+                      padding:
+                        "8px 14px",
+                      borderRadius:
+                        "6px",
+                      cursor:
+                        "pointer",
+                    }}
+                  >
+                    Excluir
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
