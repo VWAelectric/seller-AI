@@ -12,7 +12,11 @@ export default function Dashboard() {
     successRate: 98,
   });
 
-  const [activities, setActivities] = useState([]);
+  const [recentProducts, setRecentProducts] =
+    useState([]);
+
+  const [recentGenerations, setRecentGenerations] =
+    useState([]);
 
   useEffect(() => {
     const products = getProducts();
@@ -30,42 +34,42 @@ export default function Dashboard() {
       successRate: 98,
     });
 
-    const recentActivities = [
-      ...products.map((product) => ({
-        type: "Produto",
-        message: `${product.name || "Produto"} cadastrado`,
-      })),
-      ...generations.map((generation) => ({
-        type: "Conteúdo",
-        message: `${generation.type || "Conteúdo"} gerado`,
-      })),
-    ];
+    setRecentProducts(
+      [...products].reverse().slice(0, 5)
+    );
 
-    setActivities(
-      recentActivities.reverse().slice(0, 5)
+    setRecentGenerations(
+      [...generations].slice(0, 5)
     );
   }, []);
 
   const cardStyle = {
-    background: "#fff",
+    background: "#ffffff",
     borderRadius: "16px",
     padding: "24px",
-    boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
+    boxShadow:
+      "0 4px 12px rgba(0,0,0,0.08)",
   };
 
   return (
     <div style={{ padding: "30px" }}>
-      <h1>📊 Dashboard</h1>
-
-      <p
+      <div
         style={{
-          color: "#666",
           marginBottom: "30px",
         }}
       >
-        Bem-vindo à SellerAI. Acompanhe seus
-        resultados e produtividade.
-      </p>
+        <h1>🚀 SellerAI Dashboard</h1>
+
+        <p
+          style={{
+            color: "#666",
+            marginTop: "10px",
+          }}
+        >
+          Visão geral da operação da sua
+          plataforma.
+        </p>
+      </div>
 
       <div
         style={{
@@ -88,13 +92,13 @@ export default function Dashboard() {
         </div>
 
         <div style={cardStyle}>
-          <h3>⏱ Horas Economizadas</h3>
-          <h1>{stats.hoursSaved}</h1>
+          <h3>⏱ Tempo Economizado</h3>
+          <h1>{stats.hoursSaved}h</h1>
           <p>Estimativa baseada em IA</p>
         </div>
 
         <div style={cardStyle}>
-          <h3>🚀 Performance</h3>
+          <h3>📈 Performance</h3>
           <h1>{stats.successRate}%</h1>
           <p>Eficiência da plataforma</p>
         </div>
@@ -102,33 +106,78 @@ export default function Dashboard() {
 
       <div
         style={{
-          ...cardStyle,
+          display: "grid",
+          gridTemplateColumns:
+            "1fr 1fr",
+          gap: "20px",
           marginTop: "30px",
         }}
       >
-        <h2>📋 Atividades Recentes</h2>
+        <div style={cardStyle}>
+          <h2>
+            📦 Últimos Produtos
+          </h2>
 
-        {activities.length === 0 ? (
-          <p>
-            Nenhuma atividade registrada até o
-            momento.
-          </p>
-        ) : (
-          <ul>
-            {activities.map(
-              (activity, index) => (
-                <li
-                  key={index}
-                  style={{
-                    padding: "8px 0",
-                  }}
-                >
-                  {activity.message}
-                </li>
-              )
-            )}
-          </ul>
-        )}
+          {recentProducts.length === 0 ? (
+            <p>
+              Nenhum produto cadastrado.
+            </p>
+          ) : (
+            <ul>
+              {recentProducts.map(
+                (product) => (
+                  <li
+                    key={product.id}
+                    style={{
+                      marginBottom:
+                        "10px",
+                    }}
+                  >
+                    <strong>
+                      {product.name}
+                    </strong>
+                    <br />
+                    {product.category}
+                  </li>
+                )
+              )}
+            </ul>
+          )}
+        </div>
+
+        <div style={cardStyle}>
+          <h2>
+            🤖 Últimas Gerações
+          </h2>
+
+          {recentGenerations.length ===
+          0 ? (
+            <p>
+              Nenhum conteúdo
+              gerado.
+            </p>
+          ) : (
+            <ul>
+              {recentGenerations.map(
+                (item) => (
+                  <li
+                    key={item.id}
+                    style={{
+                      marginBottom:
+                        "10px",
+                    }}
+                  >
+                    <strong>
+                      {item.type}
+                    </strong>
+                    <br />
+                    {item.product}
+                  </li>
+                )
+              )}
+            </ul>
+          )}
+        </div>
       </div>
 
       <div
@@ -137,33 +186,31 @@ export default function Dashboard() {
           marginTop: "30px",
         }}
       >
-        <h2>📈 Resumo Geral</h2>
+        <h2>
+          📊 Resumo Operacional
+        </h2>
 
         <p>
+          Atualmente a SellerAI possui{" "}
           <strong>
-            Produtos cadastrados:
+            {stats.products}
           </strong>{" "}
-          {stats.products}
+          produtos cadastrados e{" "}
+          <strong>
+            {stats.generations}
+          </strong>{" "}
+          conteúdos gerados.
         </p>
 
         <p>
-          <strong>
-            Conteúdos gerados:
-          </strong>{" "}
-          {stats.generations}
+          A plataforma já possui um fluxo
+          completo entre Produtos,
+          Generator, Library e Dashboard.
         </p>
 
         <p>
-          <strong>
-            Horas economizadas:
-          </strong>{" "}
-          {stats.hoursSaved}
-        </p>
-
-        <p>
-          <strong>Status:</strong> Plataforma
-          operacional e pronta para integração
-          com OpenAI e PostgreSQL.
+          Próxima etapa: integração com
+          backend e OpenAI.
         </p>
       </div>
     </div>

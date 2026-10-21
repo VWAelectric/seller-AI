@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { getProducts } from "../services/storage";
+import {
+  getProducts,
+  addGeneration,
+} from "../services/storage";
 
 export default function Generator() {
   const [products, setProducts] = useState([]);
@@ -25,13 +28,18 @@ export default function Generator() {
     if (!product) return;
 
     let content = "";
+    let typeLabel = "";
 
     switch (contentType) {
       case "title":
+        typeLabel = "Título";
+
         content = `${product.name} | Categoria ${product.category} | Melhor relação custo-benefício por apenas R$ ${product.price}`;
         break;
 
       case "description":
+        typeLabel = "Descrição";
+
         content = `
 ${product.name} é um produto da categoria ${product.category}, desenvolvido para oferecer qualidade, praticidade e excelente desempenho.
 
@@ -44,6 +52,8 @@ Invista em desempenho, qualidade e segurança com ${product.name}.
         break;
 
       case "bullets":
+        typeLabel = "Bullet Points";
+
         content = `
 • Produto: ${product.name}
 • Categoria: ${product.category}
@@ -61,6 +71,12 @@ Invista em desempenho, qualidade e segurança com ${product.name}.
     }
 
     setGeneratedContent(content);
+
+    addGeneration({
+      product: product.name,
+      type: typeLabel,
+      content,
+    });
   };
 
   return (
@@ -123,9 +139,7 @@ Invista em desempenho, qualidade e segurança com ${product.name}.
           </option>
         </select>
 
-        <button
-          onClick={generateContent}
-        >
+        <button onClick={generateContent}>
           Gerar Conteúdo
         </button>
       </div>

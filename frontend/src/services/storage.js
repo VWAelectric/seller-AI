@@ -1,13 +1,18 @@
-// ================================
+// ========================================
 // PRODUTOS
-// ================================
+// ========================================
 
 export const getProducts = () => {
-  return JSON.parse(localStorage.getItem("products")) || [];
+  return JSON.parse(
+    localStorage.getItem("products")
+  ) || [];
 };
 
 export const saveProducts = (products) => {
-  localStorage.setItem("products", JSON.stringify(products));
+  localStorage.setItem(
+    "products",
+    JSON.stringify(products)
+  );
 };
 
 export const addProduct = (product) => {
@@ -22,6 +27,21 @@ export const addProduct = (product) => {
   saveProducts(products);
 };
 
+export const updateProduct = (
+  updatedProduct
+) => {
+  const products = getProducts();
+
+  const updatedProducts = products.map(
+    (product) =>
+      product.id === updatedProduct.id
+        ? updatedProduct
+        : product
+  );
+
+  saveProducts(updatedProducts);
+};
+
 export const deleteProduct = (id) => {
   const products = getProducts().filter(
     (product) => product.id !== id
@@ -30,67 +50,73 @@ export const deleteProduct = (id) => {
   saveProducts(products);
 };
 
-// ================================
+// ========================================
 // GERAÇÕES IA
-// ================================
+// ========================================
 
 export const getGenerations = () => {
-  return JSON.parse(localStorage.getItem("generations")) || [];
+  return JSON.parse(
+    localStorage.getItem("generations")
+  ) || [];
 };
 
-export const saveGenerations = (generations) => {
+export const saveGenerations = (
+  generations
+) => {
   localStorage.setItem(
     "generations",
     JSON.stringify(generations)
   );
 };
 
-export const addGeneration = (generation) => {
-  const generations = getGenerations();
+export const addGeneration = (
+  generation
+) => {
+  const generations =
+    getGenerations();
 
-  generations.push({
+  generations.unshift({
     id: Date.now(),
-    createdAt: new Date().toISOString(),
+    createdAt:
+      new Date().toISOString(),
     ...generation,
   });
 
   saveGenerations(generations);
 };
 
-export const deleteGeneration = (id) => {
-  const generations = getGenerations().filter(
-    (generation) => generation.id !== id
-  );
+export const deleteGeneration = (
+  id
+) => {
+  const generations =
+    getGenerations().filter(
+      (generation) =>
+        generation.id !== id
+    );
 
   saveGenerations(generations);
 };
 
-// ================================
+// ========================================
 // DASHBOARD
-// ================================
+// ========================================
 
-export const getDashboardStats = () => {
-  const products = getProducts();
-  const generations = getGenerations();
+export const getDashboardStats =
+  () => {
+    const products =
+      getProducts();
+    const generations =
+      getGenerations();
 
-  return {
-    products: products.length,
-    generations: generations.length,
-    hoursSaved: (
-      (generations.length * 5) /
-      60
-    ).toFixed(1),
+    return {
+      products:
+        products.length,
+      generations:
+        generations.length,
+      hoursSaved: (
+        (generations.length *
+          5) /
+        60
+      ).toFixed(1),
+    };
   };
-};
-
-export const updateProduct = (updatedProduct) => {
-  const products = getProducts();
-
-  const updatedProducts = products.map((product) =>
-    product.id === updatedProduct.id
-      ? updatedProduct
-      : product
-  );
-
-  saveProducts(updatedProducts);
-};
