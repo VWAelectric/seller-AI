@@ -8,6 +8,10 @@ import {
 
 export default function Products() {
   const [products, setProducts] = useState([]);
+  const [search, setSearch] = useState("");
+
+  const [sortField, setSortField] = useState("name");
+  const [sortOrder, setSortOrder] = useState("asc");
 
   const [editingId, setEditingId] = useState(null);
 
@@ -21,24 +25,23 @@ export default function Products() {
   }, []);
 
   const loadProducts = () => {
-    const savedProducts = getProducts();
-    setProducts(savedProducts);
+    setProducts(getProducts());
   };
 
   const clearForm = () => {
+    setEditingId(null);
     setName("");
     setCategory("");
     setPrice("");
     setSku("");
-    setEditingId(null);
   };
 
   const handleDelete = (id) => {
-    const confirmDelete = window.confirm(
+    const confirmed = window.confirm(
       "Deseja realmente excluir este produto?"
     );
 
-    if (!confirmDelete) return;
+    if (!confirmed) return;
 
     deleteProduct(id);
     loadProducts();
@@ -87,13 +90,69 @@ export default function Products() {
     clearForm();
   };
 
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortOrder(
+        sortOrder === "asc"
+          ? "desc"
+          : "asc"
+      );
+    } else {
+      setSortField(field);
+      setSortOrder("asc");
+    }
+  };
+
+  const getSortIcon = (field) => {
+    if (sortField !== field) {
+      return "↕";
+    }
+
+    return sortOrder === "asc"
+      ? "↑"
+      : "↓";
+  };
+
+  const filteredProducts = products
+    .filter(
+      (product) =>
+        product.name
+          .toLowerCase()
+          .includes(search.toLowerCase()) ||
+        product.category
+          .toLowerCase()
+          .includes(search.toLowerCase()) ||
+        product.sku
+          .toLowerCase()
+          .includes(search.toLowerCase())
+    )
+    .sort((a, b) => {
+      let comparison = 0;
+
+      if (sortField === "price") {
+        comparison =
+          Number(a.price) -
+          Number(b.price);
+      } else {
+        comparison = String(
+          a[sortField]
+        ).localeCompare(
+          String(b[sortField])
+        );
+      }
+
+      return sortOrder === "asc"
+        ? comparison
+        : -comparison;
+    });
+
   return (
     <div style={{ padding: "30px" }}>
       <h1>📦 Produtos</h1>
 
       <p>
-        Cadastre e gerencie os produtos que serão
-        utilizados pela inteligência artificial.
+        Cadastre e gerencie os produtos da
+        SellerAI.
       </p>
 
       <form
@@ -104,34 +163,43 @@ export default function Products() {
           gap: "12px",
           maxWidth: "500px",
           marginTop: "20px",
+          marginBottom: "40px",
         }}
       >
         <input
           type="text"
           placeholder="Nome do produto"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) =>
+            setName(e.target.value)
+          }
         />
 
         <input
           type="text"
           placeholder="Categoria"
           value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          onChange={(e) =>
+            setCategory(e.target.value)
+          }
         />
 
         <input
           type="number"
           placeholder="Preço"
           value={price}
-          onChange={(e) => setPrice(e.target.value)}
+          onChange={(e) =>
+            setPrice(e.target.value)
+          }
         />
 
         <input
           type="text"
           placeholder="SKU"
           value={sku}
-          onChange={(e) => setSku(e.target.value)}
+          onChange={(e) =>
+            setSku(e.target.value)
+          }
         />
 
         <button type="submit">
@@ -150,102 +218,188 @@ export default function Products() {
         )}
       </form>
 
-      <div style={{ marginTop: "40px" }}>
-        <h2>📋 Produtos Cadastrados</h2>
+      <h2>📋 Produtos Cadastrados</h2>
 
-        {products.length === 0 ? (
-          <p>Nenhum produto cadastrado.</p>
-        ) : (
-          <ul
-            style={{
-              listStyle: "none",
-              padding: 0,
-            }}
-          >
-            {products.map((product) => (
-              <li
-                key={product.id}
+      <input
+        type="text"
+        placeholder="Pesquisar produto..."
+        value={search}
+        onChange={(e) =>
+          setSearch(e.target.value)
+        }
+        style={{
+          width: "100%",
+          maxWidth: "400px",
+          padding: "10px",
+          marginTop: "15px",
+          marginBottom: "20px",
+        }}
+      />
+
+      <p>
+        <strong>
+          {filteredProducts.length}
+        </strong>{" "}
+        produto(s) encontrado(s)
+      </p>
+
+      <div
+        style={{
+          overflowX: "auto",
+          marginTop: "20px",
+        }}
+      >
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            background: "#fff",
+            borderRadius: "10px",
+            overflow: "hidden",
+            boxShadow:
+              "0 2px 10px rgba(0,0,0,0.08)",
+          }}
+        >
+          <thead>
+            <tr
+              style={{
+                background: "#f3f4f6",
+              }}
+            >
+              <th
+                onClick={() =>
+                  handleSort("name")
+                }
                 style={{
-                  background: "#fff",
                   padding: "15px",
-                  marginBottom: "15px",
-                  borderRadius: "10px",
-                  boxShadow:
-                    "0 2px 8px rgba(0,0,0,0.08)",
+                  textAlign: "left",
+                  cursor: "pointer",
+                  userSelect: "none",
                 }}
               >
-                <strong>
-                  {product.name}
-                </strong>
+                Produto {getSortIcon("name")}
+              </th>
 
-                <p>
-                  Categoria:{" "}
-                  {product.category}
-                </p>
+              <th
+                onClick={() =>
+                  handleSort("category")
+                }
+                style={{
+                  padding: "15px",
+                  textAlign: "left",
+                  cursor: "pointer",
+                  userSelect: "none",
+                }}
+              >
+                Categoria {getSortIcon("category")}
+              </th>
 
-                <p>
-                  Preço: R${" "}
-                  {product.price}
-                </p>
+              <th
+                onClick={() =>
+                  handleSort("price")
+                }
+                style={{
+                  padding: "15px",
+                  textAlign: "left",
+                  cursor: "pointer",
+                  userSelect: "none",
+                }}
+              >
+                Preço {getSortIcon("price")}
+              </th>
 
-                <p>
-                  SKU: {product.sku}
-                </p>
+              <th
+                style={{
+                  padding: "15px",
+                  textAlign: "left",
+                }}
+              >
+                SKU
+              </th>
 
-                <div
+              <th
+                style={{
+                  padding: "15px",
+                  textAlign: "center",
+                }}
+              >
+                Ações
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {filteredProducts.length === 0 ? (
+              <tr>
+                <td
+                  colSpan="5"
                   style={{
-                    display: "flex",
-                    gap: "10px",
+                    padding: "20px",
+                    textAlign: "center",
                   }}
                 >
-                  <button
-                    onClick={() =>
-                      handleEdit(
-                        product
-                      )
-                    }
+                  Nenhum produto encontrado.
+                </td>
+              </tr>
+            ) : (
+              filteredProducts.map(
+                (product) => (
+                  <tr
+                    key={product.id}
                     style={{
-                      background:
-                        "#0d6efd",
-                      color: "#fff",
-                      border: "none",
-                      padding:
-                        "8px 14px",
-                      borderRadius:
-                        "6px",
-                      cursor:
-                        "pointer",
+                      borderTop:
+                        "1px solid #e5e7eb",
                     }}
                   >
-                    Editar
-                  </button>
+                    <td style={{ padding: "15px" }}>
+                      {product.name}
+                    </td>
 
-                  <button
-                    onClick={() =>
-                      handleDelete(
-                        product.id
-                      )
-                    }
-                    style={{
-                      background:
-                        "#dc3545",
-                      color: "#fff",
-                      border: "none",
-                      padding:
-                        "8px 14px",
-                      borderRadius:
-                        "6px",
-                      cursor:
-                        "pointer",
-                    }}
-                  >
-                    Excluir
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+                    <td style={{ padding: "15px" }}>
+                      {product.category}
+                    </td>
+
+                    <td style={{ padding: "15px" }}>
+                      R$ {product.price}
+                    </td>
+
+                    <td style={{ padding: "15px" }}>
+                      {product.sku}
+                    </td>
+
+                    <td
+                      style={{
+                        padding: "15px",
+                        textAlign: "center",
+                      }}
+                    >
+                      <button
+                        onClick={() =>
+                          handleEdit(product)
+                        }
+                        style={{
+                          marginRight: "10px",
+                        }}
+                      >
+                        Editar
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          handleDelete(
+                            product.id
+                          )
+                        }
+                      >
+                        Excluir
+                      </button>
+                    </td>
+                  </tr>
+                )
+              )
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );
