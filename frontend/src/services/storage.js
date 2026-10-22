@@ -120,3 +120,31 @@ export const getDashboardStats =
       ).toFixed(1),
     };
   };
+
+  // ========================================
+// SETTINGS
+// ========================================
+
+export const getSettings = () => {
+  return (
+    JSON.parse(
+      localStorage.getItem("settings")
+    ) || {
+      userName: "",
+      companyName: "",
+      email: "",
+      tone: "Persuasivo",
+      language: "Português",
+      marketplace: "Mercado Livre",
+    }
+  );
+};
+
+export const saveSettings = (
+  settings
+) => {
+  localStorage.setItem(
+    "settings",
+    JSON.stringify(settings)
+  );
+};
