@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useToast } from "../context/ToastContext";
 import {
   getSettings,
   saveSettings,
@@ -37,6 +38,8 @@ export default function Settings() {
     );
   };
 
+  const { showToast } = useToast();
+  
   return (
     <div style={{ padding: "30px" }}>
       <h1>⚙️ Configurações</h1>

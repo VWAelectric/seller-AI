@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import Card from "../components/ui/Card";
+import PageHeader from "../components/ui/PageHeader";
 import {
   getProducts,
   getGenerations,
@@ -58,7 +60,10 @@ export default function Dashboard() {
           marginBottom: "30px",
         }}
       >
-        <h1>🚀 SellerAI Dashboard</h1>
+        <PageHeader
+          title="🚀 SellerAI Dashboard"
+          subtitle="Visão geral da operação da plataforma."
+        />
 
         <p
           style={{
@@ -79,29 +84,29 @@ export default function Dashboard() {
           gap: "20px",
         }}
       >
-        <div style={cardStyle}>
+        <Card style={cardStyle}>
           <h3>📦 Produtos</h3>
           <h1>{stats.products}</h1>
           <p>Produtos cadastrados</p>
-        </div>
+        </Card>
 
-        <div style={cardStyle}>
+        <Card style={cardStyle}>
           <h3>🤖 Conteúdos</h3>
           <h1>{stats.generations}</h1>
           <p>Conteúdos gerados</p>
-        </div>
+        </Card>
 
-        <div style={cardStyle}>
+        <Card style={cardStyle}>
           <h3>⏱ Tempo Economizado</h3>
           <h1>{stats.hoursSaved}h</h1>
           <p>Estimativa baseada em IA</p>
-        </div>
+        </Card>
 
-        <div style={cardStyle}>
+        <Card style={cardStyle}>
           <h3>📈 Performance</h3>
           <h1>{stats.successRate}%</h1>
           <p>Eficiência da plataforma</p>
-        </div>
+        </Card>
       </div>
 
       <div
@@ -113,7 +118,7 @@ export default function Dashboard() {
           marginTop: "30px",
         }}
       >
-        <div style={cardStyle}>
+        <Card style={cardStyle}>
           <h2>
             📦 Últimos Produtos
           </h2>
@@ -143,15 +148,15 @@ export default function Dashboard() {
               )}
             </ul>
           )}
-        </div>
+        </Card>
 
-        <div style={cardStyle}>
+        <Card style={cardStyle}>
           <h2>
             🤖 Últimas Gerações
           </h2>
 
           {recentGenerations.length ===
-          0 ? (
+            0 ? (
             <p>
               Nenhum conteúdo
               gerado.
@@ -177,7 +182,7 @@ export default function Dashboard() {
               )}
             </ul>
           )}
-        </div>
+        </Card>
       </div>
 
       <div

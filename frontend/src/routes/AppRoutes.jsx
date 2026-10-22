@@ -1,4 +1,9 @@
-import { Routes, Route } from "react-router-dom";
+import {
+  Routes,
+  Route,
+} from "react-router-dom";
+
+import MainLayout from "../layouts/MainLayout";
 
 import Dashboard from "../pages/Dashboard";
 import Products from "../pages/Products";
@@ -8,13 +13,37 @@ import Settings from "../pages/Settings";
 
 export default function AppRoutes() {
   return (
+
     <Routes>
-      <Route path="/" element={<Dashboard />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/products" element={<Products />} />
-      <Route path="/generator" element={<Generator />} />
-      <Route path="/library" element={<Library />} />
-      <Route path="/settings" element={<Settings />} />
+      <Route
+        element={<MainLayout />}
+      >
+        <Route
+          path="/"
+          element={<Dashboard />}
+        />
+
+        <Route
+          path="/products"
+          element={<Products />}
+        />
+
+        <Route
+          path="/generator"
+          element={<Generator />}
+        />
+
+        <Route
+          path="/library"
+          element={<Library />}
+        />
+
+        <Route
+          path="/settings"
+          element={<Settings />}
+        />
+      </Route>
     </Routes>
+
   );
 }
