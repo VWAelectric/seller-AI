@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useToast } from "../context/ToastContext";
 import {
   getGenerations,
   deleteGeneration,
@@ -34,17 +35,19 @@ export default function Library() {
     loadGenerations();
   };
 
+  const { showToast } = useToast();
+
   const handleCopy = async (content) => {
     try {
       await navigator.clipboard.writeText(
         content
       );
 
-      alert(
+      showToast(
         "Conteúdo copiado com sucesso!"
       );
     } catch {
-      alert(
+      showToast(
         "Não foi possível copiar o conteúdo."
       );
     }
@@ -73,7 +76,7 @@ export default function Library() {
         filterType === "Todos"
           ? true
           : generation.type ===
-            filterType;
+          filterType;
 
       return (
         matchesSearch &&
@@ -178,7 +181,7 @@ export default function Library() {
       </p>
 
       {filteredGenerations.length ===
-      0 ? (
+        0 ? (
         <div
           style={{
             marginTop: "20px",
