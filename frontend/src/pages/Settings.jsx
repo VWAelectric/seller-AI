@@ -33,13 +33,13 @@ export default function Settings() {
 
     saveSettings(settings);
 
-    alert(
+    showToast(
       "Configurações salvas com sucesso!"
     );
   };
 
   const { showToast } = useToast();
-  
+
   return (
     <div style={{ padding: "30px" }}>
       <h1>⚙️ Configurações</h1>
